@@ -1,0 +1,16 @@
+---
+- name: install mysql packages
+  apt: pkg={{item}} update_cache=yes
+  with_items:
+      - mysql-server-{{mysqlversion}}
+      - libmysqlclient-dev
+      - python3-pip
+      - python-mysqldb
+- name: install mysqlclient package
+  pip: name=mysqlclient executable=pip3
+- name: create mysql database
+  mysql_db: name={{dbname}} state=present
+  sudo_user: mysql
+- name: create mysql user
+  mysql_user: name={{dbuser}} password={{dbpassword}} host='%' priv={{dbname}}.*:ALL state=present
+  sudo_user: mysql
